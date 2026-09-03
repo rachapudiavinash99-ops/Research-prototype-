@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 
 interface Project {
   id: number;
@@ -16,55 +15,55 @@ export default function Projects() {
 
   const fetchProjects = () => {
     setLoading(true);
-    axios.get('http://localhost:8001/api/projects')
-      .then(res => setProjects(res.data))
-      .catch(() => {
-        console.error("Failed to fetch projects");
-      })
-      .finally(() => setLoading(false));
+    const saved = localStorage.getItem('local_projects');
+    if (saved) {
+      setProjects(JSON.parse(saved));
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchProjects();
   }, []);
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await axios.post('http://localhost:8001/api/projects', newProject);
-      setShowForm(false);
-      setNewProject({ name: '', description: '', status: 'active' });
-      fetchProjects();
-    } catch (err) {
-      alert("Failed to create project");
-    }
+  const saveProjects = (updatedProjects: Project[]) => {
+    setProjects(updatedProjects);
+    localStorage.setItem('local_projects', JSON.stringify(updatedProjects));
   };
 
-  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    const projectToSave: Project = {
+      id: Date.now(),
+      name: newProject.name,
+      description: newProject.description,
+      status: newProject.status
+    };
+    saveProjects([projectToSave, ...projects]);
+    setShowForm(false);
+    setNewProject({ name: '', description: '', status: 'active' });
+    alert("Successfully created project!");
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      try {
-        await axios.post('http://localhost:8001/api/projects', {
-          name: `Imported: ${file.name}`,
-          description: `Automatically generated project from imported file. Size: ${(file.size / 1024).toFixed(2)} KB.`,
-          status: 'active'
-        });
-        fetchProjects();
-        alert(`Successfully imported ${file.name} and added it to your Projects list!`);
-      } catch (err) {
-        alert("Failed to import file as project");
-      }
+      const projectToSave: Project = {
+        id: Date.now(),
+        name: `Imported: ${file.name}`,
+        description: `Automatically generated project from imported file. Size: ${(file.size / 1024).toFixed(2)} KB.`,
+        status: 'active'
+      };
+      saveProjects([projectToSave, ...projects]);
+      alert(`Successfully imported ${file.name} and added it to your Projects list!`);
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = (id: number) => {
     if (confirm("Are you sure you want to delete this project?")) {
-      try {
-        await axios.delete(`http://localhost:8001/api/projects/${id}`);
-        fetchProjects();
-      } catch (err) {
-        alert("Failed to delete project");
-      }
+      const updated = projects.filter(p => p.id !== id);
+      saveProjects(updated);
+      alert("Successfully deleted project!");
     }
   };
 
@@ -105,7 +104,7 @@ export default function Projects() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleCreate} className="bg-white p-6 rounded-lg shadow-sm border mb-6">
+        <form onSubmit={handleCreate} className="bg-white p-6 rounded-lg shadow-sm border mb-6 animate-fade-in-up">
           <h3 className="font-bold mb-4">Create New Project</h3>
           <div className="space-y-4">
             <div>
@@ -116,7 +115,7 @@ export default function Projects() {
               <label className="block text-sm font-medium text-gray-700">Description</label>
               <textarea required value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" />
             </div>
-            <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 font-medium">Save Project</button>
+            <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 font-medium cursor-pointer">Save Project</button>
           </div>
         </form>
       )}
@@ -151,6 +150,12 @@ export default function Projects() {
               </div>
             </div>
           ))}
+          {projects.length === 0 && !showForm && (
+            <div className="col-span-full flex flex-col items-center justify-center h-48 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 bg-gray-50">
+              <p className="text-lg mb-2">No projects found.</p>
+              <p className="text-sm">Click "+ New Project" or "Import Files" to get started!</p>
+            </div>
+          )}
         </div>
       )}
     </div>
