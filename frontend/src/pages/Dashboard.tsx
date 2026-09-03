@@ -3,11 +3,16 @@ import React, { useState, useEffect } from 'react';
 export default function Dashboard() {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     const savedPhoto = localStorage.getItem('profilePhoto');
     if (savedPhoto) {
       setProfilePhoto(savedPhoto);
+    }
+    const savedEmail = localStorage.getItem('registeredEmail');
+    if (savedEmail) {
+      setEmail(savedEmail);
     }
   }, []);
 
@@ -38,6 +43,11 @@ export default function Dashboard() {
     e.preventDefault();
     alert("Password successfully updated!");
     setShowPasswordForm(false);
+  };
+
+  const handleEmailSave = () => {
+    localStorage.setItem('registeredEmail', email);
+    alert("Email ID saved successfully! This will be used for password recovery.");
   };
 
   return (
@@ -86,6 +96,28 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Email ID Section */}
+        <div className="w-full border-t pt-6 mb-4 space-y-2">
+          <label className="block text-sm font-bold text-gray-700">Recovery Email ID</label>
+          <div className="flex space-x-2">
+            <input 
+              type="email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email address" 
+              className="flex-1 rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" 
+            />
+            <button 
+              onClick={handleEmailSave}
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 font-medium text-sm shadow-sm cursor-pointer transition-colors"
+            >
+              Save
+            </button>
+          </div>
+          <p className="text-xs text-gray-500">Used to send an OTP if you forget your password.</p>
+        </div>
+
+        {/* Change Password Section */}
         <div className="w-full border-t pt-6 mt-2">
           {!showPasswordForm ? (
             <button 
