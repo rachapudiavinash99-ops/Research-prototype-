@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, Float, Boolean, DateTime
 from sqlalchemy.sql import func
-from app.db.base import Base
+from app.db.session import Base
 
 class OpticalPhysicsExperiment(Base):
     __tablename__ = "optical_physics_experiments"

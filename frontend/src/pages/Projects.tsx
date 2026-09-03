@@ -3,7 +3,7 @@ import axios from 'axios';
 
 interface Project {
   id: number;
-  name: str;
+  name: string;
   description: string;
   status: string;
 }
@@ -11,29 +11,63 @@ interface Project {
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [newProject, setNewProject] = useState({ name: '', description: '', status: 'active' });
 
-  useEffect(() => {
-    // Attempt to fetch real data from backend, fallback to mock data on fail
+  const fetchProjects = () => {
+    setLoading(true);
     axios.get('http://localhost:8001/api/projects')
       .then(res => setProjects(res.data))
       .catch(() => {
-        setProjects([
-          { id: 1, name: "Quantum Computing Algorithms", description: "Researching Shor's algorithm optimizations", status: "active" },
-          { id: 2, name: "Next-Gen NLP Models", description: "Training language models on edge devices", status: "planning" },
-          { id: 3, name: "Fusion Reactor Materials", description: "Testing high-heat resistant alloys", status: "experimenting" }
-        ]);
+        console.error("Failed to fetch projects");
       })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchProjects();
   }, []);
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://localhost:8001/api/projects', newProject);
+      setShowForm(false);
+      setNewProject({ name: '', description: '', status: 'active' });
+      fetchProjects();
+    } catch (err) {
+      alert("Failed to create project");
+    }
+  };
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Research Projects</h2>
-        <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 font-medium cursor-pointer" onClick={() => alert("Create Project functionality connected!")}>
-          + New Project
+        <button 
+          className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 font-medium cursor-pointer" 
+          onClick={() => setShowForm(!showForm)}
+        >
+          {showForm ? 'Cancel' : '+ New Project'}
         </button>
       </div>
+
+      {showForm && (
+        <form onSubmit={handleCreate} className="bg-white p-6 rounded-lg shadow-sm border mb-6">
+          <h3 className="font-bold mb-4">Create New Project</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Project Name</label>
+              <input type="text" required value={newProject.name} onChange={e => setNewProject({...newProject, name: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <textarea required value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" />
+            </div>
+            <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 font-medium">Save Project</button>
+          </div>
+        </form>
+      )}
       
       {loading ? (
         <p>Loading projects...</p>
@@ -43,16 +77,11 @@ export default function Projects() {
             <div key={p.id} className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="font-bold text-lg leading-tight">{p.name}</h3>
-                <span className={px-2 py-1 text-xs font-medium rounded-full }>
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${p.status === 'active' ? 'bg-green-100 text-green-800' : p.status === 'planning' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}`}>
                   {p.status}
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4 line-clamp-2">{p.description}</p>
-              <div className="mt-4 pt-4 border-t flex justify-between items-center">
-                <button className="text-indigo-600 text-sm font-medium hover:text-indigo-800 cursor-pointer" onClick={() => alert(Opening project: )}>
-                  View Details
-                </button>
-              </div>
             </div>
           ))}
         </div>

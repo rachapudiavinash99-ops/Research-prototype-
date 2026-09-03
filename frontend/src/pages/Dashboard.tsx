@@ -1,5 +1,8 @@
-import React from 'react';
+﻿import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 export default function Dashboard() {
+  const navigate = useNavigate();
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">Research Dashboard</h2>
@@ -25,21 +28,21 @@ export default function Dashboard() {
               <p className="font-medium">Alpha Version 2.0 Uploaded</p>
               <p className="text-sm text-gray-500">By Dr. Smith • 2 hours ago</p>
             </div>
-            <button className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-md text-sm font-medium hover:bg-indigo-100 transition-colors">View</button>
+            <button onClick={() => navigate('/prototypes')} className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-md text-sm font-medium hover:bg-indigo-100 transition-colors cursor-pointer">View</button>
           </li>
           <li className="flex items-center justify-between border-b pb-4">
             <div>
               <p className="font-medium">Quantum Simulator Trial Failed</p>
               <p className="text-sm text-gray-500">System • 5 hours ago</p>
             </div>
-            <button className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-md text-sm font-medium hover:bg-indigo-100 transition-colors">View</button>
+            <button onClick={() => navigate('/experiments')} className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-md text-sm font-medium hover:bg-indigo-100 transition-colors cursor-pointer">View</button>
           </li>
           <li className="flex items-center justify-between">
             <div>
               <p className="font-medium">New Project Created: Gene Therapy</p>
               <p className="text-sm text-gray-500">By Admin • 1 day ago</p>
             </div>
-            <button className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-md text-sm font-medium hover:bg-indigo-100 transition-colors">View</button>
+            <button onClick={() => navigate('/projects')} className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-md text-sm font-medium hover:bg-indigo-100 transition-colors cursor-pointer">View</button>
           </li>
         </ul>
       </div>

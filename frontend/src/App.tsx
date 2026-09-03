@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+﻿import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { Activity, BookOpen, Layers, LayoutDashboard, Settings } from "lucide-react";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
+import PlaceholderPage from "./pages/Placeholder";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -19,18 +20,18 @@ function Layout({ children }: { children: React.ReactNode }) {
             <BookOpen size={20} />
             <span>Projects</span>
           </Link>
-          <a href="#" className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
+          <Link to="/prototypes" className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
             <Layers size={20} />
             <span>Prototypes</span>
-          </a>
-          <a href="#" className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
+          </Link>
+          <Link to="/experiments" className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
             <Activity size={20} />
             <span>Experiments</span>
-          </a>
-          <a href="#" className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
+          </Link>
+          <Link to="/settings" className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
             <Settings size={20} />
             <span>Settings</span>
-          </a>
+          </Link>
         </nav>
       </aside>
       <main className="flex-1 p-8 overflow-y-auto">
@@ -47,6 +48,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/prototypes" element={<PlaceholderPage title="Prototypes Module" />} />
+          <Route path="/experiments" element={<PlaceholderPage title="Experiments Module" />} />
+          <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
         </Routes>
       </Layout>
     </BrowserRouter>

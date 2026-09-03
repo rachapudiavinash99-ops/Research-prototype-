@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, Float, Boolean, DateTime
 from sqlalchemy.sql import func
-from app.db.base import Base
+from app.db.session import Base
 
 class MedicinalChemistryExperiment(Base):
     __tablename__ = "medicinal_chemistry_experiments"
