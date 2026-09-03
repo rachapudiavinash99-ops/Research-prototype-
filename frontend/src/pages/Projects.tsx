@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 interface Project {
@@ -45,12 +45,12 @@ export default function Projects() {
       const file = e.target.files[0];
       try {
         await axios.post('http://localhost:8001/api/projects', {
-          name: \Imported: \\,
-          description: \Automatically generated project from imported file. Size: \ KB.\,
+          name: `Imported: ${file.name}`,
+          description: `Automatically generated project from imported file. Size: ${(file.size / 1024).toFixed(2)} KB.`,
           status: 'active'
         });
         fetchProjects();
-        alert(\Successfully imported \ and added it to your Projects list!\);
+        alert(`Successfully imported ${file.name} and added it to your Projects list!`);
       } catch (err) {
         alert("Failed to import file as project");
       }
@@ -60,7 +60,7 @@ export default function Projects() {
   const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this project?")) {
       try {
-        await axios.delete(\http://localhost:8001/api/projects/\\);
+        await axios.delete(`http://localhost:8001/api/projects/${id}`);
         fetchProjects();
       } catch (err) {
         alert("Failed to delete project");
@@ -74,7 +74,7 @@ export default function Projects() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = \\_data.json\;
+    link.download = `${p.name.replace(/\s+/g, "_")}_data.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -129,7 +129,7 @@ export default function Projects() {
             <div key={p.id} className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow flex flex-col">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="font-bold text-lg leading-tight">{p.name}</h3>
-                <span className={\px-2 py-1 text-xs font-medium rounded-full \\}>
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${p.status === 'active' ? 'bg-green-100 text-green-800' : p.status === 'planning' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}`}>
                   {p.status}
                 </span>
               </div>
@@ -137,13 +137,13 @@ export default function Projects() {
               
               <div className="mt-4 pt-4 border-t flex justify-between items-center space-x-2">
                 <button 
-                  className="bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-indigo-100 transition-colors flex-1" 
+                  className="bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-indigo-100 transition-colors flex-1 cursor-pointer" 
                   onClick={() => handleDownload(p)}
                 >
                   Download
                 </button>
                 <button 
-                  className="bg-red-50 text-red-600 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-100 transition-colors flex-1" 
+                  className="bg-red-50 text-red-600 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-100 transition-colors flex-1 cursor-pointer" 
                   onClick={() => handleDelete(p.id)}
                 >
                   Delete
