@@ -1,7 +1,8 @@
-﻿import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { Activity, BookOpen, Layers, LayoutDashboard, Settings } from "lucide-react";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
+import Prototypes from "./pages/Prototypes";
 import PlaceholderPage from "./pages/Placeholder";
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -48,7 +49,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
-          <Route path="/prototypes" element={<PlaceholderPage title="Prototypes Module" />} />
+          <Route path="/prototypes" element={<Prototypes />} />
           <Route path="/experiments" element={<PlaceholderPage title="Experiments Module" />} />
           <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
         </Routes>
