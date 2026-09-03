@@ -44,12 +44,27 @@ export default function Projects() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Research Projects</h2>
-        <button 
-          className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 font-medium cursor-pointer" 
-          onClick={() => setShowForm(!showForm)}
-        >
-          {showForm ? 'Cancel' : '+ New Project'}
-        </button>
+        <div className="flex space-x-3">
+          <label className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 font-medium cursor-pointer flex items-center">
+            Import Files
+            <input 
+              type="file" 
+              className="hidden" 
+              multiple 
+              onChange={(e) => {
+                if(e.target.files && e.target.files.length > 0) {
+                  alert(`Selected ${e.target.files.length} file(s) for import!`);
+                }
+              }} 
+            />
+          </label>
+          <button 
+            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 font-medium cursor-pointer" 
+            onClick={() => setShowForm(!showForm)}
+          >
+            {showForm ? 'Cancel' : '+ New Project'}
+          </button>
+        </div>
       </div>
 
       {showForm && (
