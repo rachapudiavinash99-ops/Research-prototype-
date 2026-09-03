@@ -1,5 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.endpoints import auth
+from app.db.session import engine, Base
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Research Prototype Hub API")
 
@@ -10,6 +14,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 
 @app.get("/")
 def read_root():
