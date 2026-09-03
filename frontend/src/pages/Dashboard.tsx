@@ -12,6 +12,10 @@ export default function Dashboard() {
     }
   };
 
+  const handleRemovePhoto = () => {
+    setProfilePhoto(null);
+  };
+
   return (
     <div className="flex flex-col items-center p-8">
       <h2 className="text-3xl font-bold mb-8 text-gray-800">My Profile Dashboard</h2>
@@ -28,15 +32,35 @@ export default function Dashboard() {
           )}
         </div>
 
-        <label className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-medium cursor-pointer shadow-sm transition-colors w-full text-center">
-          Upload Profile Photo
-          <input 
-            type="file" 
-            className="hidden" 
-            accept="image/*" 
-            onChange={handlePhotoUpload} 
-          />
-        </label>
+        {!profilePhoto ? (
+          <label className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-medium cursor-pointer shadow-sm transition-colors w-full text-center">
+            Upload Profile Photo
+            <input 
+              type="file" 
+              className="hidden" 
+              accept="image/*" 
+              onChange={handlePhotoUpload} 
+            />
+          </label>
+        ) : (
+          <div className="flex space-x-4 w-full">
+            <label className="bg-indigo-50 text-indigo-700 border border-indigo-200 px-4 py-3 rounded-lg hover:bg-indigo-100 font-medium cursor-pointer shadow-sm transition-colors flex-1 text-center">
+              Edit Profile
+              <input 
+                type="file" 
+                className="hidden" 
+                accept="image/*" 
+                onChange={handlePhotoUpload} 
+              />
+            </label>
+            <button 
+              onClick={handleRemovePhoto}
+              className="bg-red-50 text-red-600 border border-red-200 px-4 py-3 rounded-lg hover:bg-red-100 font-medium cursor-pointer shadow-sm transition-colors flex-1 text-center"
+            >
+              Remove Profile
+            </button>
+          </div>
+        )}
         
         <p className="text-sm text-gray-500 mt-4 text-center">
           Supported formats: JPEG, PNG, GIF, WebP.
