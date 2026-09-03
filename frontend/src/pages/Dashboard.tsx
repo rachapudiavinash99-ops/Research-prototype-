@@ -4,6 +4,11 @@ export default function Dashboard() {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [email, setEmail] = useState('');
+  
+  // Password change states
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   useEffect(() => {
     const savedPhoto = localStorage.getItem('profilePhoto');
@@ -19,7 +24,6 @@ export default function Dashboard() {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
@@ -27,7 +31,7 @@ export default function Dashboard() {
         try {
           localStorage.setItem('profilePhoto', base64String);
         } catch (err) {
-          alert("This image is too large to save permanently in your browser. It will disappear if you refresh.");
+          alert("This image is too large to save permanently in your browser.");
         }
       };
       reader.readAsDataURL(file);
@@ -39,15 +43,53 @@ export default function Dashboard() {
     localStorage.removeItem('profilePhoto');
   };
 
-  const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Password successfully updated!");
-    setShowPasswordForm(false);
+  const handleEmailSave = () => {
+    if (!email) {
+      alert("Email cannot be empty.");
+      return;
+    }
+    localStorage.setItem('registeredEmail', email);
+    alert("Email ID saved successfully! It is now permanently visible on your dashboard.");
   };
 
-  const handleEmailSave = () => {
-    localStorage.setItem('registeredEmail', email);
-    alert("Email ID saved successfully! This will be used for password recovery.");
+  const handleForgotPassword = () => {
+    const savedEmail = localStorage.getItem('registeredEmail') || email;
+    if (!savedEmail) {
+      alert("Please save an Email ID first so we know where to send the OTP.");
+      return;
+    }
+    
+    // Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Temporarily overwrite their password with the OTP
+    localStorage.setItem('registeredPassword', otp);
+    
+    alert(`An OTP has been sent to your email ID: ${savedEmail}\n\n[DEMO MODE: Your OTP is ${otp}]\n\nPlease enter this OTP in the 'Current Password' box to authorize your password change.`);
+  };
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const savedPassword = localStorage.getItem('registeredPassword');
+    
+    if (currentPassword !== savedPassword) {
+      alert("The Current Password (or OTP) you entered is incorrect.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      alert("The new passwords do not match.");
+      return;
+    }
+    
+    localStorage.setItem('registeredPassword', newPassword);
+    alert("Password successfully updated!");
+    
+    // Reset form
+    setShowPasswordForm(false);
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
   };
 
   return (
@@ -96,16 +138,16 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Email ID Section */}
+        {/* Improved Email ID Section */}
         <div className="w-full border-t pt-6 mb-4 space-y-2">
-          <label className="block text-sm font-bold text-gray-700">Recovery Email ID</label>
+          <label className="block text-sm font-bold text-gray-700">Registered Email ID</label>
           <div className="flex space-x-2">
             <input 
               type="email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email address" 
-              className="flex-1 rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" 
+              placeholder="e.g. user@example.com" 
+              className="flex-1 rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none font-semibold text-indigo-900 bg-gray-50" 
             />
             <button 
               onClick={handleEmailSave}
@@ -114,7 +156,7 @@ export default function Dashboard() {
               Save
             </button>
           </div>
-          <p className="text-xs text-gray-500">Used to send an OTP if you forget your password.</p>
+          <p className="text-xs text-gray-500">This email is used to recover your account if you forget your password.</p>
         </div>
 
         {/* Change Password Section */}
@@ -129,18 +171,66 @@ export default function Dashboard() {
           ) : (
             <form onSubmit={handlePasswordSubmit} className="space-y-4 animate-fade-in">
               <h3 className="font-bold text-gray-700 mb-2">Update Password</h3>
-              <div>
-                <input type="password" placeholder="Current Password" required className="w-full rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+              
+              <div className="relative">
+                <input 
+                  type="password" 
+                  value={currentPassword}
+                  onChange={e => setCurrentPassword(e.target.value)}
+                  placeholder="Current Password (or OTP)" 
+                  required 
+                  className="w-full rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none pr-20" 
+                />
+                <button 
+                  type="button" 
+                  onClick={handleForgotPassword}
+                  className="absolute right-2 top-2 text-xs text-indigo-600 hover:text-indigo-800 font-bold bg-indigo-50 px-2 py-1 rounded cursor-pointer transition-colors"
+                >
+                  Forgot?
+                </button>
               </div>
+
               <div>
-                <input type="password" placeholder="New Password" required className="w-full rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+                <input 
+                  type="password" 
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  placeholder="New Password" 
+                  required 
+                  className="w-full rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" 
+                />
               </div>
+              
               <div>
-                <input type="password" placeholder="Confirm New Password" required className="w-full rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+                <input 
+                  type="password" 
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm New Password" 
+                  required 
+                  className="w-full rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" 
+                />
               </div>
+              
               <div className="flex space-x-2 pt-2">
-                <button type="button" onClick={() => setShowPasswordForm(false)} className="flex-1 bg-gray-100 text-gray-600 px-3 py-2 rounded-md hover:bg-gray-200 font-medium text-sm cursor-pointer transition-colors">Cancel</button>
-                <button type="submit" className="flex-1 bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 font-medium text-sm shadow-sm cursor-pointer transition-colors">Update</button>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setShowPasswordForm(false);
+                    setCurrentPassword('');
+                    setNewPassword('');
+                    setConfirmPassword('');
+                  }} 
+                  className="flex-1 bg-gray-100 text-gray-600 px-3 py-2 rounded-md hover:bg-gray-200 font-medium text-sm cursor-pointer transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="flex-1 bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 font-medium text-sm shadow-sm cursor-pointer transition-colors"
+                >
+                  Update
+                </button>
               </div>
             </form>
           )}
