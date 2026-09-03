@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 export default function Dashboard() {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   useEffect(() => {
     const savedPhoto = localStorage.getItem('profilePhoto');
@@ -33,6 +34,12 @@ export default function Dashboard() {
     localStorage.removeItem('profilePhoto');
   };
 
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert("Password successfully updated!");
+    setShowPasswordForm(false);
+  };
+
   return (
     <div className="flex flex-col items-center p-8">
       <h2 className="text-3xl font-bold mb-8 text-gray-800">My Profile Dashboard</h2>
@@ -50,7 +57,7 @@ export default function Dashboard() {
         </div>
 
         {!profilePhoto ? (
-          <label className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-medium cursor-pointer shadow-sm transition-colors w-full text-center">
+          <label className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-medium cursor-pointer shadow-sm transition-colors w-full text-center mb-6">
             Upload Profile Photo
             <input 
               type="file" 
@@ -60,7 +67,7 @@ export default function Dashboard() {
             />
           </label>
         ) : (
-          <div className="flex space-x-4 w-full">
+          <div className="flex space-x-4 w-full mb-6">
             <label className="bg-indigo-50 text-indigo-700 border border-indigo-200 px-4 py-3 rounded-lg hover:bg-indigo-100 font-medium cursor-pointer shadow-sm transition-colors flex-1 text-center">
               Edit Profile
               <input 
@@ -78,11 +85,35 @@ export default function Dashboard() {
             </button>
           </div>
         )}
-        
-        <p className="text-sm text-gray-500 mt-4 text-center">
-          Supported formats: JPEG, PNG, GIF, WebP.
-        </p>
 
+        <div className="w-full border-t pt-6 mt-2">
+          {!showPasswordForm ? (
+            <button 
+              onClick={() => setShowPasswordForm(true)}
+              className="w-full text-gray-600 bg-gray-100 hover:bg-gray-200 px-4 py-3 rounded-lg font-medium cursor-pointer transition-colors"
+            >
+              Change Password
+            </button>
+          ) : (
+            <form onSubmit={handlePasswordSubmit} className="space-y-4 animate-fade-in">
+              <h3 className="font-bold text-gray-700 mb-2">Update Password</h3>
+              <div>
+                <input type="password" placeholder="Current Password" required className="w-full rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+              </div>
+              <div>
+                <input type="password" placeholder="New Password" required className="w-full rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+              </div>
+              <div>
+                <input type="password" placeholder="Confirm New Password" required className="w-full rounded-md border-gray-300 border p-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+              </div>
+              <div className="flex space-x-2 pt-2">
+                <button type="button" onClick={() => setShowPasswordForm(false)} className="flex-1 bg-gray-100 text-gray-600 px-3 py-2 rounded-md hover:bg-gray-200 font-medium text-sm cursor-pointer transition-colors">Cancel</button>
+                <button type="submit" className="flex-1 bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 font-medium text-sm shadow-sm cursor-pointer transition-colors">Update</button>
+              </div>
+            </form>
+          )}
+        </div>
+        
       </div>
     </div>
   );
