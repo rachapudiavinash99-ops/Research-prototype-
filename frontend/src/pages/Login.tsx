@@ -7,9 +7,14 @@ export default function Login() {
   
   const [isAnimationPlaying, setIsAnimationPlaying] = useState(true);
 
-  // Form states for Signup validation
+  // Form states for Signup
+  const [signupUsername, setSignupUsername] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [signupConfirm, setSignupConfirm] = useState('');
+
+  // Form states for Signin
+  const [signinUsername, setSigninUsername] = useState('');
+  const [signinPassword, setSigninPassword] = useState('');
 
   const handleModeChange = (newMode: 'signin' | 'signup') => {
     setMode(newMode);
@@ -18,7 +23,15 @@ export default function Login() {
 
   const handleSigninSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/dashboard');
+    
+    const savedUsername = localStorage.getItem('registeredUsername');
+    const savedPassword = localStorage.getItem('registeredPassword');
+
+    if (savedUsername && savedUsername === signinUsername && savedPassword === signinPassword) {
+      navigate('/dashboard');
+    } else {
+      alert("Invalid username or password!");
+    }
   };
 
   const handleSignupSubmit = (e: React.FormEvent) => {
@@ -27,7 +40,17 @@ export default function Login() {
       alert("Re-enter password was not match");
       return;
     }
-    navigate('/dashboard');
+    
+    // Save to local storage for realistic prototyping
+    localStorage.setItem('registeredUsername', signupUsername);
+    localStorage.setItem('registeredPassword', signupPassword);
+    
+    alert("Profile created successfully! Please sign in with your new credentials.");
+    
+    // Clear signin forms just in case and swap to signin mode
+    setSigninUsername(signupUsername);
+    setSigninPassword('');
+    setMode('signin');
   };
 
   return (
@@ -72,11 +95,25 @@ export default function Login() {
             <form onSubmit={handleSigninSubmit} className="space-y-4">
               <div>
                 <label className="block text-gray-200 text-sm font-medium mb-1">Username</label>
-                <input type="text" required className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50" placeholder="Enter your username" />
+                <input 
+                  type="text" 
+                  required 
+                  value={signinUsername}
+                  onChange={(e) => setSigninUsername(e.target.value)}
+                  className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50" 
+                  placeholder="Enter your username" 
+                />
               </div>
               <div>
                 <label className="block text-gray-200 text-sm font-medium mb-1">Password</label>
-                <input type="password" required className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50" placeholder="Enter your password" />
+                <input 
+                  type="password" 
+                  required 
+                  value={signinPassword}
+                  onChange={(e) => setSigninPassword(e.target.value)}
+                  className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50" 
+                  placeholder="Enter your password" 
+                />
               </div>
               <button type="submit" className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 transition-colors mt-6 shadow-lg cursor-pointer">
                 Login
@@ -94,7 +131,14 @@ export default function Login() {
             <form onSubmit={handleSignupSubmit} className="space-y-4">
               <div>
                 <label className="block text-gray-200 text-sm font-medium mb-1">Username</label>
-                <input type="text" required className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50" placeholder="Choose a username" />
+                <input 
+                  type="text" 
+                  required 
+                  value={signupUsername}
+                  onChange={(e) => setSignupUsername(e.target.value)}
+                  className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50" 
+                  placeholder="Choose a username" 
+                />
               </div>
               <div>
                 <label className="block text-gray-200 text-sm font-medium mb-1">Enter Password</label>
