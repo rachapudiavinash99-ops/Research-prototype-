@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 interface Project {
@@ -45,12 +45,12 @@ export default function Projects() {
       const file = e.target.files[0];
       try {
         await axios.post('http://localhost:8001/api/projects', {
-          name: \Imported: \\,
-          description: \Automatically generated project from imported file. Size: \ KB.\,
+          name: `Imported: ${file.name}`,
+          description: `Automatically generated project from imported file. Size: ${(file.size / 1024).toFixed(2)} KB.`,
           status: 'active'
         });
         fetchProjects();
-        alert(\Successfully imported \ and added it to your Projects list!\);
+        alert(`Successfully imported ${file.name} and added it to your Projects list!`);
       } catch (err) {
         alert("Failed to import file as project");
       }
@@ -105,7 +105,7 @@ export default function Projects() {
             <div key={p.id} className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="font-bold text-lg leading-tight">{p.name}</h3>
-                <span className={\px-2 py-1 text-xs font-medium rounded-full \\}>
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${p.status === 'active' ? 'bg-green-100 text-green-800' : p.status === 'planning' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}`}>
                   {p.status}
                 </span>
               </div>
