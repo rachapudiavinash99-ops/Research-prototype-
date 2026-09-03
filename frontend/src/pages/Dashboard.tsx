@@ -1,19 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function Dashboard() {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
+  useEffect(() => {
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+      setProfilePhoto(savedPhoto);
+    }
+  }, []);
+
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      // Create a local URL for the uploaded photo so we can display it
-      const url = URL.createObjectURL(file);
-      setProfilePhoto(url);
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setProfilePhoto(base64String);
+        try {
+          localStorage.setItem('profilePhoto', base64String);
+        } catch (err) {
+          alert("This image is too large to save permanently in your browser. It will disappear if you refresh.");
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleRemovePhoto = () => {
     setProfilePhoto(null);
+    localStorage.removeItem('profilePhoto');
   };
 
   return (
