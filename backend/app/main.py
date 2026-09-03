@@ -1,11 +1,11 @@
-from fastapi import FastAPI
+﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.endpoints import auth, projects, tasks, prototypes, findings
 from app.db.session import engine, Base
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Research Prototype Hub API")
+app = FastAPI(title="THINK BIG API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,4 +23,4 @@ app.include_router(findings.router, prefix="/api", tags=["findings"])
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to Research Prototype Hub API"}
+    return {"message": "Welcome to THINK BIG API"}
