@@ -1,0 +1,20 @@
+{
+  "name": "temp-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.5.4",
+    "axios": "^1.20.0",
+    "lucide-react": "^1.39.0",
+    "postcss": "^8.5.26",
+    "react-router-dom": "^7.18.3",
+    "tailwindcss": "^4.3.3"
+  }
+}
